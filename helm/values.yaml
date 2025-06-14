@@ -15,9 +15,7 @@ global:
     tlsSecret: usta-gel-tls
     timeout: 120
 
-usta-gel-dashboard:
-  app: usta-gel-dashboard
-  port: 5173
+usta_gel_dashboard:
   resources:
     limits:
       memory: 1Gi

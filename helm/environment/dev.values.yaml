@@ -1,6 +1,7 @@
 usta_gel_dashboard:
   enabled: true
   replicas: 1
+  app: usta-gel-dashboard
   host: admin.dev.agilioero.info
   port: 5173
   image: 851725272453.dkr.ecr.eu-central-1.amazonaws.com/usta-gel/usta-gel-dashboard:vIMAGE_TAG

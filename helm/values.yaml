@@ -1,0 +1,27 @@
+nameOverride: ""
+fullnameOverride: ""
+
+chartVersion: ""
+releaseName: "usta-gel-dashboard"
+targetNamespace: "default"
+chartName: "usta-gel-dashboard"
+
+global:
+  imagePullSecrets:
+    - ecr-secret
+
+  ingress:
+    sslRedirect: false
+    tlsSecret: usta-gel-tls
+    timeout: 120
+
+usta-gel-dashboard:
+  app: usta-gel-dashboard
+  port: 5173
+  resources:
+    limits:
+      memory: 1Gi
+      cpu: 500m
+    requests:
+      memory: 10Mi
+      cpu: 10m

@@ -1,0 +1,103 @@
+name: Build Docker Image and Deploy
+on:
+  # Run on direct pushes to these branches
+  push:
+    branches:
+      - dev
+      - main
+  # Also run when PRs to these branches are merged
+  pull_request:
+    types: [closed]
+    branches:
+      - dev
+      - main
+
+jobs:
+  build-deploy:
+    # Only run in two cases:
+    # 1. Direct push to the specified branches
+    # 2. When a PR is merged (not when it's just closed without merging)
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Version Check
+        uses: ./.github/actions/version-check
+
+      - name: Set Environment Variables
+        run: |
+          # For direct pushes, use github.ref
+          # For PR merges, use github.base_ref
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            BRANCH_REF="${{ github.ref }}"
+          else
+            BRANCH_REF="refs/heads/${{ github.base_ref }}"
+          fi
+
+          if [[ "$BRANCH_REF" == "refs/heads/main" ]]; then
+            echo "ENV_NAME=prod" >> $GITHUB_ENV
+            echo "KUBE_CONFIG=${{ secrets.KUBE_CONFIG_PROD }}" >> $GITHUB_ENV
+            echo "VALUES_FILE=./helm/environment/prod.values.yaml" >> $GITHUB_ENV
+          else
+            echo "ENV_NAME=dev" >> $GITHUB_ENV
+            echo "KUBE_CONFIG=${{ secrets.KUBE_CONFIG_DEV }}" >> $GITHUB_ENV
+            echo "VALUES_FILE=./helm/environment/dev.values.yaml" >> $GITHUB_ENV
+          fi
+
+          echo "Deploying to environment: ${{ env.ENV_NAME }}"
+
+      # Rest of your workflow remains the same
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ECR }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ECR }}
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, Tag, and Push the Image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: usta-gel/usta-gel-dashboard
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        run: |
+          if aws ecr describe-images --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG >/dev/null 2>&1; then
+            echo "Image $IMAGE_TAG already exists in ECR. Skipping build and push."
+          else
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          fi
+
+      - name: Set up kubectl
+        run: |
+          mkdir -p ${HOME}/.kube
+          echo "${{ env.KUBE_CONFIG }}" | base64 --decode > ${HOME}/.kube/config
+          chmod 600 ${HOME}/.kube/config
+
+          echo "Checking current context..."
+          kubectl config current-context || { echo "Error: No valid Kubernetes context found."; exit 1; }
+
+          # Check cluster info
+          kubectl cluster-info || { echo "Error: Unable to reach Kubernetes API. Check KUBE_CONFIG."; exit 1; }
+
+      - name: Update ECR Secret in Kubernetes
+        run: |
+          kubectl delete secret ecr-secret --ignore-not-found
+          kubectl create secret docker-registry ecr-secret \
+            --docker-server=${{ steps.login-ecr.outputs.registry }} \
+            --docker-username=AWS \
+            --docker-password="$(aws ecr get-login-password --region eu-central-1)"
+
+      - name: Deploy with Helm
+        env:
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        run: |
+          sed -i "s|vIMAGE_TAG|$IMAGE_TAG|g" ${{ env.VALUES_FILE }}
+          helm ls
+          helm upgrade --install usta-gel-dashboard ./helm -f ./helm/values.yaml -f ${{ env.VALUES_FILE }}

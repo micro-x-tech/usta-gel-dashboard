@@ -1,0 +1,14 @@
+{{- if .Values.usta_gel_dashboard.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.usta_gel_dashboard.app }}
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: {{ .Values.usta_gel_dashboard.port }}
+    targetPort: {{ .Values.usta_gel_dashboard.port }}
+  selector:
+    app: {{ .Values.usta_gel_dashboard.app }}
+{{- end }}

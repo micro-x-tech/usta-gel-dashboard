@@ -1,0 +1,12 @@
+usta_gel_dashboard:
+  enabled: true
+  replicas: 1
+  host: admin.dev.agilioero.info
+  port: 5173
+  image: 851725272453.dkr.ecr.eu-central-1.amazonaws.com/usta-gel/usta-gel-dashboard:vIMAGE_TAG
+  env:
+    # API URL
+    API_URL: http://api.dev.agilioero.info/graphql
+
+ingress:
+  enabled: true

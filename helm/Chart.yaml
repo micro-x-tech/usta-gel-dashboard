@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 1.0.0
+version: 1.0.0
+name: usta_gel_dashboard
+description: A Helm chart for kubernetes for usta-gel-dashboard
+type: application

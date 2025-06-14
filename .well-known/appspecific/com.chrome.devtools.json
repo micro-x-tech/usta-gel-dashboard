@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "settings": {
+    "defaultPanel": "elements",
+    "defaultDockSide": "right",
+    "showToolbar": true,
+    "showStatusBar": true,
+    "showConsole": true,
+    "showNetwork": true,
+    "showElements": true,
+    "showSources": true,
+    "showPerformance": true,
+    "showMemory": true,
+    "showApplication": true,
+    "showSecurity": true,
+    "showAudits": true
+  }
+}

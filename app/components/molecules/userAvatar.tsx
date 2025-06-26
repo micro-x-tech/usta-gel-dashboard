@@ -11,8 +11,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../atoms/dropdown-menu";
+import { useNavigate } from "react-router";
+import { isAuthenticated } from "~/data/local";
 
 export default function UserAvatar() {
+  const navigate = useNavigate();
+
   // TODO: get from backend
   const user = {
     name: "John Doe",
@@ -20,6 +24,10 @@ export default function UserAvatar() {
   };
   const userNameInitials =
     user.name.split(" ")[0][0] + user.name.split(" ")[1][0];
+
+  const handleLogout = () => {
+    isAuthenticated(false);
+  };
 
   return (
     <DropdownMenu>
@@ -42,7 +50,7 @@ export default function UserAvatar() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
           <LogOut color="black" />
           Çıkış
         </DropdownMenuItem>

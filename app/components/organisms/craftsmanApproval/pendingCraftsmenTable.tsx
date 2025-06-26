@@ -144,7 +144,7 @@ export default function PendingCraftsmenTable() {
 
   return (
     <div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
         <SearchCraftsman
           value={nameColumn?.getFilterValue() as string}
           onChange={(value) => nameColumn?.setFilterValue(value)}
@@ -158,7 +158,7 @@ export default function PendingCraftsmenTable() {
               : professionColumn?.setFilterValue(value)
           }
         >
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="Theme" />
           </SelectTrigger>
           <SelectContent>
@@ -179,7 +179,7 @@ export default function PendingCraftsmenTable() {
             ]);
           }}
         >
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="Ən Yeni" />
           </SelectTrigger>
           <SelectContent>
@@ -190,7 +190,7 @@ export default function PendingCraftsmenTable() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="w-full sm:w-auto sm:ml-auto">
               <FilterIcon width={24} height={24} />
             </Button>
           </DropdownMenuTrigger>

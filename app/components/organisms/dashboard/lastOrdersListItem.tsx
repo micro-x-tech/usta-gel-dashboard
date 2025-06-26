@@ -42,7 +42,7 @@ export default function LastOrdersListItem({ order }: LastOrdersListItemProps) {
             : "success"
         }
       >
-        statusText
+        {statusText}
       </Badge>
     </div>
   );

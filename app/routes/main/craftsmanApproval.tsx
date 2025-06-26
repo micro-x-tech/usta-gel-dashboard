@@ -31,7 +31,7 @@ export default function CraftsmanApproval() {
           setApprovalStatusFilter(value as CraftsmanApprovalStatus);
         }}
       >
-        <TabsList className="mb-2 h-10 rounded-sm p-1">
+        <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
           <TabsTrigger
             value={CraftsmanApprovalStatus.PENDING}
             className="rounded-sm px-3 cursor-pointer data-[state=active]:text-primary data-[state=inactive]:text-muted-foreground"
@@ -39,14 +39,14 @@ export default function CraftsmanApproval() {
             <ClockIcon size={16} /> Təsdiq Gözləyənlər{" "}
             <Badge>{craftsmenWaitingApproval.length}</Badge>
           </TabsTrigger>
-          |
+          <p className="text-muted-foreground hidden sm:block">|</p>
           <TabsTrigger
             value={CraftsmanApprovalStatus.APPROVED}
             className="rounded-sm px-3 cursor-pointer data-[state=active]:text-primary data-[state=inactive]:text-muted-foreground"
           >
             <CircleCheckIcon size={16} /> Təsdiq Edilmiş
           </TabsTrigger>
-          |
+          <p className="text-muted-foreground hidden sm:block">|</p>
           <TabsTrigger
             value={CraftsmanApprovalStatus.REJECTED}
             className="rounded-sm px-3 cursor-pointer data-[state=active]:text-primary data-[state=inactive]:text-muted-foreground"

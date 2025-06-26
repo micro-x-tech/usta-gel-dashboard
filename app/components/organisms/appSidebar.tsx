@@ -1,13 +1,5 @@
 import * as React from "react";
-import {
-  ClipboardList,
-  CreditCard,
-  Users,
-  ChartColumn,
-  Settings,
-  CircleHelp,
-  ChevronRight,
-} from "lucide-react";
+import { Users, ChartColumn, ChevronRight } from "lucide-react";
 
 import {
   Collapsible,
@@ -26,7 +18,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "~/components/atoms/sidebar";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 
 const navigationItems = [
   {
@@ -74,10 +66,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     tooltip={item.title}
                     isActive={appUrl.includes(item.url)}
                   >
-                    <a href={item.url}>
+                    <Link to={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
 
                   {item.items?.length ? (
@@ -96,9 +88,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 asChild
                                 isActive={appUrl === subItem.url}
                               >
-                                <a href={subItem.url}>
+                                <Link to={subItem.url}>
                                   <span>{subItem.title}</span>
-                                </a>
+                                </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           ))}

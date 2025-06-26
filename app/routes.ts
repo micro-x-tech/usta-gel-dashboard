@@ -8,13 +8,17 @@ import {
 
 export default [
   index("./routes/index.tsx"),
-  layout("./components/templates/mainLayout.tsx", [
-    route("/dashboard", "./routes/main/dashboard.tsx"),
+  route("/login", "./routes/auth/login.tsx"),
 
-    ...prefix("craftsman", [
-      index("./routes/main/allCraftsman.tsx"),
-      route("approval", "./routes/main/craftsmanApproval.tsx"),
-      route(":craftsmanId", "./routes/main/craftsman.tsx"),
+  layout("./components/templates/protectedRoute.tsx", [
+    layout("./components/templates/mainLayout.tsx", [
+      route("/dashboard", "./routes/main/dashboard.tsx"),
+
+      ...prefix("craftsman", [
+        index("./routes/main/allCraftsman.tsx"),
+        route("approval", "./routes/main/craftsmanApproval.tsx"),
+        route(":craftsmanId", "./routes/main/craftsman.tsx"),
+      ]),
     ]),
   ]),
 ] satisfies RouteConfig;

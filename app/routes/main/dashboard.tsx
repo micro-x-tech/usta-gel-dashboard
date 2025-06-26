@@ -21,7 +21,7 @@ export default function Dashboard() {
         description="Sistemin performansı və əsas göstəricilərin icmalı"
       />
 
-      <div className="grid grid-cols-3 gap-4 mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
         <StatisticCard
           title="Aktiv Ustalar"
           value={statistics.activeCraftsmen}
@@ -61,21 +61,21 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mt-8">
-        <div className="border rounded-lg p-6">
-          <p className="text-2xl font-bold">Son Sifarişlər</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+        <div className="border rounded-lg p-4 md:p-6">
+          <p className="text-xl md:text-2xl font-bold">Son Sifarişlər</p>
 
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 md:mt-6 space-y-4">
             {orders.map((order) => (
               <LastOrdersListItem key={order.id} order={order} />
             ))}
           </div>
         </div>
 
-        <div className="border rounded-lg p-6">
-          <p className="text-2xl font-bold">Yeni Ustalar</p>
+        <div className="border rounded-lg p-4 md:p-6">
+          <p className="text-xl md:text-2xl font-bold">Yeni Ustalar</p>
 
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 md:mt-6 space-y-4">
             {newCraftsmen.map((craftsman) => (
               <NewCraftsmenListItem key={craftsman.id} craftsman={craftsman} />
             ))}

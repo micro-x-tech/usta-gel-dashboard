@@ -1,11 +1,13 @@
 import { Navigate, Outlet } from "react-router";
-import { isAuthenticated } from "~/data/local";
-import { useReactiveVar } from "@apollo/client";
+import { useReadLocalStorage } from "usehooks-ts";
+import storage, { STORAGE_KEYS } from "~/utils/storage";
 
 export default function ProtectedRoute() {
-  const isAuthenticatedValue = useReactiveVar(isAuthenticated);
+  const accessToken = useReadLocalStorage<string>(STORAGE_KEYS.ACCESS_TOKEN, {
+    deserializer: storage.stringDeserializer,
+  });
 
-  if (!isAuthenticatedValue) {
+  if (!accessToken) {
     return <Navigate to="/login" />;
   }
 

@@ -1,3 +1,3 @@
-import { makeVar } from "@apollo/client";
+// import { makeVar } from "@apollo/client";
 
-export const isAuthenticated = makeVar(false);
+// put local variables here

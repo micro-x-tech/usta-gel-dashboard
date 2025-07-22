@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useLocalStorage } from "usehooks-ts";
+import { ProfileType } from "~/__generated__/graphql";
 import { Button } from "~/components/atoms/button";
 import {
   Card,
@@ -10,21 +12,43 @@ import {
 } from "~/components/atoms/card";
 import { Input } from "~/components/atoms/input";
 import { Label } from "~/components/atoms/label";
-import { isAuthenticated } from "~/data/local";
+import { Spinner } from "~/components/atoms/spinner";
+import storage from "~/utils/storage";
+import { STORAGE_KEYS } from "~/utils/storage";
+import { useLoginMutation } from "~/data/api";
 
 export default function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
+  const [login, { loading: loginLoading }] = useLoginMutation();
+
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (email === "admin" && password === "admin") {
-      isAuthenticated(true);
+  const handleLogin = async () => {
+    try {
+      const { data } = await login({
+        variables: {
+          phoneNumber: `+994${phoneNumber}`,
+          password,
+          profileType: ProfileType.Admin,
+        },
+      });
 
-      navigate("/dashboard", { replace: true });
-    } else {
-      alert("Invalid email or password");
+      if (data?.login) {
+        storage.setItemAsString(
+          STORAGE_KEYS.ACCESS_TOKEN,
+          data.login.accessToken
+        );
+        storage.setItemAsString(
+          STORAGE_KEYS.REFRESH_TOKEN,
+          data.login.refreshToken
+        );
+
+        navigate("/dashboard", { replace: true });
+      }
+    } catch (error) {
+      alert("Invalid phone number or password");
     }
   };
 
@@ -46,14 +70,17 @@ export default function Login() {
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-3">
                     <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
+                    <div className="flex items-center gap-2">
+                      <span>+994</span>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="XX XXX XX XX"
+                        required
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                      />
+                    </div>
                   </div>
                   <div className="grid gap-3">
                     <Label htmlFor="password">Password</Label>
@@ -67,11 +94,16 @@ export default function Login() {
                   </div>
                   <div className="flex flex-col gap-3">
                     <Button
-                      type="submit"
+                      type="button"
                       className="w-full"
                       onClick={handleLogin}
+                      disabled={loginLoading}
                     >
-                      Login
+                      {loginLoading ? (
+                        <Spinner show size="small" className="text-white" />
+                      ) : (
+                        "Login"
+                      )}
                     </Button>
                   </div>
                 </div>

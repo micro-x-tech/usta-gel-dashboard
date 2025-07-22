@@ -11,8 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../atoms/dropdown-menu";
+import { STORAGE_KEYS } from "~/utils/storage";
+import storage from "~/utils/storage";
 import { useNavigate } from "react-router";
-import { isAuthenticated } from "~/data/local";
 
 export default function UserAvatar() {
   const navigate = useNavigate();
@@ -26,7 +27,10 @@ export default function UserAvatar() {
     user.name.split(" ")[0][0] + user.name.split(" ")[1][0];
 
   const handleLogout = () => {
-    isAuthenticated(false);
+    storage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+    storage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+
+    navigate("/login", { replace: true });
   };
 
   return (
